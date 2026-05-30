@@ -1,0 +1,6 @@
+<RCC>
+  <qresource prefix="/qt/qml/MachineVision/">
+    <file alias="res/res.qrc">/Users/liuchaoyue/myCode/MachineVision/res/res.qrc</file>
+  </qresource>
+</RCC>
+

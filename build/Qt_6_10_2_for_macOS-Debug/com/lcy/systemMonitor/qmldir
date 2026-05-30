@@ -1,0 +1,7 @@
+module com.lcy.systemMonitor
+linktarget systemMonitorplugin
+optional plugin systemMonitorplugin
+classname com_lcy_systemMonitorPlugin
+typeinfo systemMonitor.qmltypes
+prefer :/qt/qml/com/lcy/systemMonitor/
+

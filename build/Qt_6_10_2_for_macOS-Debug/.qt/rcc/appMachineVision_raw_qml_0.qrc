@@ -1,0 +1,15 @@
+<RCC>
+  <qresource prefix="/qt/qml/MachineVision/">
+    <file alias="Main.qml">/Users/liuchaoyue/myCode/MachineVision/Main.qml</file>
+    <file alias="qml/TopBar.qml">/Users/liuchaoyue/myCode/MachineVision/qml/TopBar.qml</file>
+    <file alias="qml/MainContent.qml">/Users/liuchaoyue/myCode/MachineVision/qml/MainContent.qml</file>
+    <file alias="qml/ImageWindow.qml">/Users/liuchaoyue/myCode/MachineVision/qml/ImageWindow.qml</file>
+    <file alias="qml/RunView.qml">/Users/liuchaoyue/myCode/MachineVision/qml/RunView.qml</file>
+    <file alias="qml/ConnectionView.qml">/Users/liuchaoyue/myCode/MachineVision/qml/ConnectionView.qml</file>
+    <file alias="qml/AlgoDialog.qml">/Users/liuchaoyue/myCode/MachineVision/qml/AlgoDialog.qml</file>
+    <file alias="qml/BottomBar.qml">/Users/liuchaoyue/myCode/MachineVision/qml/BottomBar.qml</file>
+    <file alias="qml/ConnectionSetting.qml">/Users/liuchaoyue/myCode/MachineVision/qml/ConnectionSetting.qml</file>
+    <file alias="qml/LayoutSetting.qml">/Users/liuchaoyue/myCode/MachineVision/qml/LayoutSetting.qml</file>
+  </qresource>
+</RCC>
+

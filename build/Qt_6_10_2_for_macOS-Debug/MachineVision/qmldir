@@ -1,0 +1,15 @@
+module MachineVision
+typeinfo appMachineVision.qmltypes
+prefer :/qt/qml/MachineVision/
+Main 254.0 Main.qml
+TopBar 254.0 qml/TopBar.qml
+MainContent 254.0 qml/MainContent.qml
+ImageWindow 254.0 qml/ImageWindow.qml
+RunView 254.0 qml/RunView.qml
+ConnectionView 254.0 qml/ConnectionView.qml
+AlgoDialog 254.0 qml/AlgoDialog.qml
+BottomBar 254.0 qml/BottomBar.qml
+ConnectionSetting 254.0 qml/ConnectionSetting.qml
+LayoutSetting 254.0 qml/LayoutSetting.qml
+depends QtQuick
+
