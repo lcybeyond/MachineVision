@@ -4,6 +4,7 @@ project(MachineVision VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+
 find_package(Qt6 REQUIRED COMPONENTS Quick SerialBus)
 
 qt_standard_project_setup(REQUIRES 6.8)
@@ -68,7 +69,7 @@ qt_add_qml_module(AlgorithmManager
     src/AlgorithmManager.cpp src/AlgorithmManager.h
     src/AlgorithmScriptEngine.cpp src/AlgorithmScriptEngine.h
     src/ScriptApi.h src/ScriptApi.cpp
-    src/FileScriptEngine.h src/FileScriptEngine.cpp
+    src/FileConfig.h src/FileConfig.cpp
     src/ScriptManager.h src/ScriptManager.cpp
     src/GlobalVariableManager.h src/GlobalVariableManager.cpp
     src/Logger.h src/Logger.cpp

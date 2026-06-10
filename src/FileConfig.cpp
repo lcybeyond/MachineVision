@@ -1,16 +1,16 @@
-#include "FileScriptEngine.h"
+#include "FileConfig.h"
 #include <QFile>
 #include <QDir>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QCoreApplication>
 
-FileScriptEngine::FileScriptEngine(QObject *parent)
+FileConfig::FileConfig(QObject *parent)
     : QObject(parent)
 {
 }
 
-QString FileScriptEngine::readFile(const QString &path) const
+QString FileConfig::readFile(const QString &path) const
 {
     QFile file(path);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -18,7 +18,7 @@ QString FileScriptEngine::readFile(const QString &path) const
     return QTextStream(&file).readAll();
 }
 
-bool FileScriptEngine::writeFile(const QString &path, const QString &content) const
+bool FileConfig::writeFile(const QString &path, const QString &content) const
 {
     QFile file(path);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
@@ -28,13 +28,13 @@ bool FileScriptEngine::writeFile(const QString &path, const QString &content) co
     return true;
 }
 
-QStringList FileScriptEngine::listFiles(const QString &dirPath) const
+QStringList FileConfig::listFiles(const QString &dirPath) const
 {
     QDir dir(dirPath);
     return dir.entryList(QDir::Files | QDir::NoDotAndDotDot, QDir::Name);
 }
 
-bool FileScriptEngine::deleteFile(const QString &path) const
+bool FileConfig::deleteFile(const QString &path) const
 {
     return QFile::remove(path);
 }
@@ -44,7 +44,7 @@ static QString baseDir()
     return QDir::cleanPath(QCoreApplication::applicationDirPath() + "/../../..");
 }
 
-QString FileScriptEngine::scriptDir() const
+QString FileConfig::scriptDir() const
 {
     QString dir = baseDir() + "/Scripts";
     QDir().mkpath(dir);
@@ -56,7 +56,7 @@ static QString settingJsonPath()
     return baseDir() + "/Scripts/Setting.json";
 }
 
-QString FileScriptEngine::loadSetting(const QString &key) const
+QString FileConfig::loadSetting(const QString &key) const
 {
     QFile file(settingJsonPath());
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -66,7 +66,7 @@ QString FileScriptEngine::loadSetting(const QString &key) const
     return doc.object().value(key).toString();
 }
 
-void FileScriptEngine::saveSetting(const QString &key, const QString &value)
+void FileConfig::saveSetting(const QString &key, const QString &value)
 {
     QDir().mkpath(baseDir() + "/Scripts");
 
@@ -86,7 +86,7 @@ void FileScriptEngine::saveSetting(const QString &key, const QString &value)
     }
 }
 
-QString FileScriptEngine::connDir() const
+QString FileConfig::connDir() const
 {
     QString dir = baseDir() + "/Connections";
     QDir().mkpath(dir);

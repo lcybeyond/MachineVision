@@ -17,14 +17,12 @@ Item {
 
     property var algoManager: AlgorithmManager { id: algoManager }
     property var globalVarMgr: GlobalVariableManager { id: globalVarMgr }
-    property var fileEngine: FileScriptEngine { id: fileEngine }
-    property var logger: Logger { id: logger }
     property var scriptManager: ScriptManager {
         id: scriptManager
         algorithmManager: algoManager
         connectionMgr: connectionManager
         globalVariableManager: globalVarMgr
-        logger: logger
+        logger: Logger
     }
 
     function openGlobalVars() {
@@ -35,6 +33,7 @@ Item {
     Component.onCompleted: {
         algoManager.createAlgorithm("边缘检测", "default");
         algoManager.createAlgorithm("缺陷识别", "default");
+        Logger.setStatus("连接管理初始化完成")
     }
 
     StackLayout {
@@ -45,8 +44,6 @@ Item {
         RunView {
             id: runView
             scriptMgr: scriptManager
-            fileEngine: root.fileEngine
-            logger: root.logger
             Layout.fillHeight: true
             Layout.fillWidth: true
         }
@@ -90,6 +87,5 @@ Item {
     GlobalVariable {
         id: globalVarPopup
         globalVarMgr: root.globalVarMgr
-        fileEngine: root.fileEngine
     }
 }

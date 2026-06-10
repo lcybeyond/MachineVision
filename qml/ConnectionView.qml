@@ -7,7 +7,6 @@ Item {
     id: root
 
     property var connMgr: null
-    property var fileEngine: FileScriptEngine { id: fileEngine }
 
     property int selectedIndex: -1
 
@@ -17,10 +16,9 @@ Item {
 
     function loadAllConnections() {
         connListModel.clear()
-        if (!fileEngine) return
 
-        var dirPath = fileEngine.connDir()
-        var files = fileEngine.listFiles(dirPath)
+        var dirPath = FileConfig.connDir()
+        var files = FileConfig.listFiles(dirPath)
         if (!files || files.length === 0) return
 
         var entries = []
@@ -28,7 +26,7 @@ Item {
             if (!/\.json$/i.test(files[i])) continue
 
             var path = dirPath + "/" + files[i]
-            var jsonStr = fileEngine.readFile(path)
+            var jsonStr = FileConfig.readFile(path)
             if (jsonStr === "") continue
 
             var params = {}
@@ -134,7 +132,6 @@ Item {
             ConnectionSetting {
                 id: connectionSettings
                 connMgr: root.connMgr
-                fileEngine: root.fileEngine
                 Layout.fillWidth: true
                 Layout.fillHeight: true
 

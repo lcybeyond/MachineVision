@@ -1,16 +1,20 @@
-#ifndef FILESCRIPTENGINE_H
-#define FILESCRIPTENGINE_H
+#ifndef FILECONFIG_H
+#define FILECONFIG_H
 
 #include <QObject>
 #include <QtQml/qqmlregistration.h>
+#include <QJSEngine>
+#include <QQmlEngine>
 
-class FileScriptEngine : public QObject
+class FileConfig : public QObject
 {
     Q_OBJECT
     QML_ELEMENT
+    QML_SINGLETON
 
 public:
-    explicit FileScriptEngine(QObject *parent = nullptr);
+
+    explicit FileConfig(QObject *parent = nullptr);
 
     Q_INVOKABLE QString readFile(const QString &path) const;
     Q_INVOKABLE bool writeFile(const QString &path, const QString &content) const;
@@ -22,4 +26,4 @@ public:
     Q_INVOKABLE QString connDir() const;
 };
 
-#endif // FILESCRIPTENGINE_H
+#endif // FILECONFIG_H

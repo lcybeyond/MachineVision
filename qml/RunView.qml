@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls.Material
+import com.lcy.algorithmManager
 
 Item {
     id: root
@@ -12,18 +13,16 @@ Item {
     property real rowSpacing: 15
     property real columnSpacing: 15
     property var scriptMgr: null
-    property var fileEngine: null
-    property var logger: null
 
     function executeAll() {
-        if (!scriptMgr || !fileEngine) return
+        if (!scriptMgr) return
         logText.text = ""
-        if (logger) logger.clear()
+        Logger.clear()
         for (var i = 0; i < windowCount; i++) {
             var key = "Algo" + i
-            var fileName = fileEngine.loadSetting(key)
+            var fileName = FileConfig.loadSetting(key)
             if (fileName === "") continue
-            var code = fileEngine.readFile(fileEngine.scriptDir() + "/" + fileName)
+            var code = FileConfig.readFile(FileConfig.scriptDir() + "/" + fileName)
             if (code === "") continue
             var engine = scriptMgr.engineAt(i)
             if (!engine) continue
@@ -63,19 +62,19 @@ Item {
 
                     windowIndex: index
                 }
-                Component.onCompleted: {
-                    scriptMgr.ensureCount(repeater.count + 1)
-                    for (var i = 0; i < repeater.count; i++) {
-                        repeater.itemAt(i).windowScriptEngine = scriptMgr.engineAt(i)
-                    }
-                    modifyScriptMgr(repeater.count)
-                }
+
                 onCountChanged: {
-                    scriptMgr.ensureCount(repeater.count + 1)
-                    for (var i = 0; i < repeater.count; i++) {
-                        repeater.itemAt(i).windowScriptEngine = scriptMgr.engineAt(i)
+                    if(count > 0){
+                        Qt.callLater(function() {
+                            scriptMgr.ensureCount(repeater.count + 1)
+                            for (var i = 0; i < repeater.count; i++) {
+                                repeater.itemAt(i).windowScriptEngine = scriptMgr.engineAt(i)
+                                var test = repeater.itemAt(i)
+                            }
+                            modifyScriptMgr(repeater.count)
+                        })
+
                     }
-                    modifyScriptMgr(repeater.count)
                 }
             }
         }
@@ -147,7 +146,7 @@ Item {
                     }
 
                     Connections {
-                        target: logger
+                        target: Logger
                         function onNewLog(msg) {
                             logText.text += msg + "\n"
                             Qt.callLater(function() {
@@ -163,7 +162,7 @@ Item {
                     text: "清空日志"
                     font.pixelSize: 12
                     onClicked: {
-                        if (logger) logger.clear()
+                        Logger.clear()
                         logText.clear()
                     }
                 }

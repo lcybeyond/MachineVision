@@ -7,6 +7,8 @@ int main(int argc, char *argv[])
 
     QQmlApplicationEngine engine;
     engine.addImportPath(QCoreApplication::applicationDirPath());
+
+
     QObject::connect(
         &engine,
         &QQmlApplicationEngine::objectCreationFailed,

@@ -7,7 +7,6 @@ Popup {
     id: root
 
     property var globalVarMgr: null
-    property var fileEngine: null
 
     width: 540
     height: 480
@@ -21,8 +20,8 @@ Popup {
     }
 
     function loadVars() {
-        if (!fileEngine || !globalVarMgr) return
-        var dir = fileEngine.scriptDir()
+        if (!globalVarMgr) return
+        var dir = FileConfig.scriptDir()
         var path = dir + "/GlobalVars.json"
         globalVarMgr.loadFromFile(path)
         syncFromManager()
@@ -59,9 +58,9 @@ Popup {
     }
 
     function saveVars() {
-        if (!fileEngine || !globalVarMgr) return
+        if (!globalVarMgr) return
         syncToManager()
-        var dir = fileEngine.scriptDir()
+        var dir = FileConfig.scriptDir()
         var path = dir + "/GlobalVars.json"
         globalVarMgr.saveToFile(path)
     }

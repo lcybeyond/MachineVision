@@ -12,24 +12,20 @@ Popup {
     closePolicy: Popup.CloseOnEscape
     modal: true
     padding: 0
-
     property int currentIndex: 0
     property var scriptEngine: null
-    property var fileEngine: FileScriptEngine{id: fileEngine}
     property string fileName: ""
 
     onOpened: {
-        if (!fileEngine) return
-
         var key = "Algo" + currentIndex
-        var saved = fileEngine.loadSetting(key)
+        var saved = FileConfig.loadSetting(key)
 
         if (saved !== "") {
             fileName = saved
-            defaultCode = fileEngine.readFile(fileEngine.scriptDir() + "/" + fileName)
+            defaultCode = FileConfig.readFile(FileConfig.scriptDir() + "/" + fileName)
         } else {
             fileName = "algo" + currentIndex + ".js"
-            fileEngine.saveSetting(key, fileName)
+            FileConfig.saveSetting(key, fileName)
         }
     }
 
@@ -82,9 +78,9 @@ Popup {
                         onClicked: {
                             root.fileName = fileNameField.text
                             var key = "Algo" + root.currentIndex
-                            fileEngine.saveSetting(key, root.fileName)
-                            var path = fileEngine.scriptDir() + "/" + root.fileName
-                            fileEngine.writeFile(path, codeEdit.text)
+                            FileConfig.saveSetting(key, root.fileName)
+                            var path = FileConfig.scriptDir() + "/" + root.fileName
+                            FileConfig.writeFile(path, codeEdit.text)
                         }
                     }
 

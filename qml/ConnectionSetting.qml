@@ -7,7 +7,6 @@ Item {
     id: root
 
     property var connMgr: null
-    property var fileEngine: null
     property int connectionIndex: 0
     property string fileName: ""
 
@@ -255,8 +254,8 @@ Item {
                     if (!fileParams.createdAt) {
                         fileParams.createdAt = Date.now()
                     }
-                    var path = fileEngine.connDir() + "/" + root.fileName
-                    fileEngine.writeFile(path, JSON.stringify(fileParams, null, 2))
+                    var path = FileConfig.connDir() + "/" + root.fileName
+                    FileConfig.writeFile(path, JSON.stringify(fileParams, null, 2))
                     var connName = root.fileName.replace(/\.json$/, "")
                     connMgr.removeConnection(connName)
                     connMgr.createConnection(connName, root.connectionType, root.connectionParams)
@@ -272,8 +271,8 @@ Item {
                 Material.background: "#c0392b"
                 Material.foreground: "#ffffff"
                 onClicked: {
-                    var path = fileEngine.connDir() + "/" + root.fileName
-                    fileEngine.deleteFile(path)
+                    var path = FileConfig.connDir() + "/" + root.fileName
+                    FileConfig.deleteFile(path)
                     var connName = root.fileName.replace(/\.json$/, "")
                     connMgr.removeConnection(connName)
                     root.deleted(root.connectionIndex)
