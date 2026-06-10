@@ -11,6 +11,8 @@ ApplicationWindow {
     visible: true
     title: "上中下布局（顶部独立QML）"
 
+
+
     ColumnLayout {
         anchors.fill: parent
 

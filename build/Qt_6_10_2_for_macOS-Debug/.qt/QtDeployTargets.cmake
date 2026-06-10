@@ -1,6 +1,0 @@
-set(__QT_DEPLOY_TARGET_appMachineVision_FILE /Users/liuchaoyue/myCode/MachineVision/build/Qt_6_10_2_for_macOS-Debug/appMachineVision.app/Contents/MacOS/appMachineVision)
-set(__QT_DEPLOY_TARGET_appMachineVision_TYPE EXECUTABLE)
-set(__QT_DEPLOY_TARGET_systemMonitor_FILE /Users/liuchaoyue/myCode/MachineVision/build/Qt_6_10_2_for_macOS-Debug/libsystemMonitor.dylib)
-set(__QT_DEPLOY_TARGET_systemMonitor_TYPE SHARED_LIBRARY)
-set(__QT_DEPLOY_TARGET_systemMonitorplugin_FILE /Users/liuchaoyue/myCode/MachineVision/build/Qt_6_10_2_for_macOS-Debug/com/lcy/systemMonitor/libsystemMonitorplugin.dylib)
-set(__QT_DEPLOY_TARGET_systemMonitorplugin_TYPE MODULE_LIBRARY)

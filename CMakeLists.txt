@@ -4,7 +4,7 @@ project(MachineVision VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Quick)
+find_package(Qt6 REQUIRED COMPONENTS Quick SerialBus)
 
 qt_standard_project_setup(REQUIRES 6.8)
 
@@ -26,6 +26,7 @@ qt_add_qml_module(appMachineVision
         QML_FILES qml/BottomBar.qml
         QML_FILES qml/ConnectionSetting.qml
         QML_FILES qml/LayoutSetting.qml
+        QML_FILES qml/GlobalScript.qml
 )
 
 qt_add_qml_module(systemMonitor
@@ -39,6 +40,43 @@ target_include_directories(systemMonitor PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
+qt_add_qml_module(ConnectionManager
+    URI com.lcy.connectionManager
+    OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/com/lcy/connectionManager
+    SOURCES
+    src/AbstractConnection.cpp src/AbstractConnection.h
+    src/ModbusTcpClient.cpp src/ModbusTcpClient.h
+    src/ConnectionManager.cpp src/ConnectionManager.h
+)
+
+target_include_directories(ConnectionManager PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
+)
+
+target_link_libraries(ConnectionManager
+    PRIVATE Qt6::SerialBus
+)
+
+qt_add_qml_module(AlgorithmManager
+    URI com.lcy.algorithmManager
+    OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/com/lcy/algorithmManager
+    SOURCES
+    src/AbstractAlgorithm.cpp src/AbstractAlgorithm.h
+    src/DefaultAlgorithm.cpp src/DefaultAlgorithm.h
+    src/AlgorithmManager.cpp src/AlgorithmManager.h
+    src/AlgorithmScriptEngine.cpp src/AlgorithmScriptEngine.h
+    src/ScriptApi.h src/ScriptApi.cpp
+    src/FileScriptEngine.h src/FileScriptEngine.cpp
+    src/ScriptManager.h src/ScriptManager.cpp
+)
+
+target_include_directories(AlgorithmManager PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
+)
+
+
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
 # explicit, fixed bundle identifier manually though.
@@ -51,7 +89,7 @@ set_target_properties(appMachineVision PROPERTIES
 )
 
 target_link_libraries(appMachineVision
-    PRIVATE Qt6::Quick systemMonitor
+    PRIVATE Qt6::Quick systemMonitor ConnectionManager AlgorithmManager
 )
 
 include(GNUInstallDirs)

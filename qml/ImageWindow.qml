@@ -5,7 +5,8 @@ Item {
     id: root
     width: 200
     height: 200
-
+    property var windowScriptEngine: null
+    property var windowIndex: null
     Item {
         id: item
         anchors.left: parent.left
@@ -118,6 +119,7 @@ Item {
 
     AlgoDialog{
         id: algoDialog
+        scriptEngine: windowScriptEngine
+        currentIndex: windowIndex
     }
-
 }

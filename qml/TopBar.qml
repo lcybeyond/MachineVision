@@ -33,6 +33,7 @@ Item {
             }
             Button {
                 text: qsTr("脚本")
+                onClicked: root.switchPage(3)
             }
             Button {
                 text: qsTr("设置")

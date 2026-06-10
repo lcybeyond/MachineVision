@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls.Material
 import QtQuick.Layouts
+import com.lcy.algorithmManager
 
 Popup {
     id: root
@@ -12,61 +13,28 @@ Popup {
     modal: true
     padding: 0
 
-    property string algorithmName: "默认算法"
+    property int currentIndex: 0
+    property var scriptEngine: null
+    property var fileEngine: FileScriptEngine{id: fileEngine}
+    property string fileName: ""
 
-    property string defaultCode: `/**
-    * 视觉检测算法
-    * 参数:
-    *   input  - 输入图像 (cv::Mat)
-    *   output - 输出图像 (cv::Mat)
-    * 返回: 检测结果
-    */
-    #include <opencv2/opencv.hpp>
-    #include <vector>
+    onOpened: {
+        if (!fileEngine) return
 
-    struct DetectResult {
-    bool ok;
-    std::vector<cv::Rect> regions;
-    double confidence;
-    };
+        var key = "Algo" + currentIndex
+        var saved = fileEngine.loadSetting(key)
 
-    DetectResult process(const cv::Mat& input, cv::Mat& output) {
-    DetectResult result;
-    result.ok = false;
-
-    if (input.empty()) return result;
-
-    cv::Mat gray, blurred, edges;
-
-    // 1. 转灰度图
-    cv::cvtColor(input, gray, cv::COLOR_BGR2GRAY);
-
-    // 2. 高斯模糊去噪
-    cv::GaussianBlur(gray, blurred, cv::Size(5, 5), 0);
-
-    // 3. Canny 边缘检测
-    cv::Canny(blurred, edges, 50, 150);
-
-    // 4. 查找轮廓
-    std::vector<std::vector<cv::Point>> contours;
-    cv::findContours(edges, contours, cv::RETR_EXTERNAL,
-    cv::CHAIN_APPROX_SIMPLE);
-
-    // 5. 筛选有效区域
-    for (const auto& contour : contours) {
-    cv::Rect rect = cv::boundingRect(contour);
-    if (rect.area() > 100) {
-    result.regions.push_back(rect);
-    cv::rectangle(output, rect, cv::Scalar(0, 255, 0), 2);
-    }
+        if (saved !== "") {
+            fileName = saved
+            defaultCode = fileEngine.readFile(fileEngine.scriptDir() + "/" + fileName)
+        } else {
+            fileName = "algo" + currentIndex + ".js"
+            fileEngine.saveSetting(key, fileName)
+        }
     }
 
-    result.ok = !result.regions.empty();
-    result.confidence = result.ok ? 0.95 : 0.0;
-    return result;
-    }`
+    property string defaultCode: ``
 
-    // ---------- 内容区 ----------
     contentItem: Rectangle {
         color: "#1e1e1e"
 
@@ -74,7 +42,7 @@ Popup {
             anchors.fill: parent
             spacing: 0
 
-            // ======== 工具栏 ========
+            // ======== 顶部：文件名 + 保存 + 关闭 ========
             Rectangle {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 36
@@ -84,91 +52,114 @@ Popup {
                     anchors.fill: parent
                     anchors.leftMargin: 8
                     anchors.rightMargin: 8
-                    spacing: 4
+                    spacing: 6
 
-                    Item {
-                        Layout.fillWidth: true
+                    TextField {
+                        id: fileNameField
+                        Layout.preferredHeight: 36
+                        Layout.preferredWidth: 160
+                        text: root.fileName
+                        color: "#d4d4d4"
+                        font.pixelSize: 12
+                        font.family: "Menlo"
+                        topPadding: 4
+                        bottomPadding: 4
+                        leftPadding: 8
+                        background: Rectangle {
+                            color: "#3c3c3c"
+                            radius: 3
+                            border.color: "#555555"
+                            border.width: 1
+                        }
                     }
 
                     Button {
-                        Layout.fillHeight: true
-                        text: "应用"
+                        Layout.preferredHeight: 36
+                        text: "保存"
+                        font.pixelSize: 12
+                        Material.background: "#0e639c"
+                        Material.foreground: "#ffffff"
+                        onClicked: {
+                            root.fileName = fileNameField.text
+                            var key = "Algo" + root.currentIndex
+                            fileEngine.saveSetting(key, root.fileName)
+                            var path = fileEngine.scriptDir() + "/" + root.fileName
+                            fileEngine.writeFile(path, codeEdit.text)
+                        }
+                    }
+
+                    Item { Layout.fillWidth: true }
+
+                    Button {
+                        Layout.preferredHeight: 36
+                        Layout.preferredWidth: 30
+                        text: "✕"
+                        font.pixelSize: 14
                         flat: true
-                        font.pixelSize: 16
-                        Material.foreground: "#4ec9b0"
+                        Material.foreground: "#cccccc"
                         onClicked: root.close()
                     }
                 }
             }
 
-            // ======== 代码编辑区 ========
+            // ======== 中间：代码编辑区 ========
             ScrollView {
                 id: scrollView
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 clip: true
 
-                contentWidth: editorRow.width
-                contentHeight: editorRow.height
+                TextEdit {
+                    id: codeEdit
+                    width: scrollView.availableWidth
+                    height: Math.max(scrollView.availableHeight, contentHeight)
+                    leftPadding: 16
+                    topPadding: 12
+                    color: "#d4d4d4"
+                    font.family: "Menlo"
+                    font.pixelSize: 13
+                    text: root.defaultCode
+                    tabStopDistance: 32
+                    selectByMouse: true
+                    persistentSelection: true
+                    wrapMode: TextEdit.NoWrap
+                    selectionColor: "#264f78"
+                    selectedTextColor: "#ffffff"
+                    cursorVisible: true
+                    activeFocusOnPress: true
+                }
+            }
 
-                Row {
-                    id: editorRow
-                    height: codeEdit.contentHeight
+            // ======== 底部：执行 + 停止 ========
+            Rectangle {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 40
+                color: "#2d2d2d"
 
-                    // -- 行号栏 --
-                    Rectangle {
-                        id: gutter
-                        width: 48
-                        height: codeEdit.contentHeight
-                        color: "#1e1e1e"
+                RowLayout {
+                    anchors.centerIn: parent
+                    spacing: 16
 
-                        Column {
-                            anchors.right: parent.right
-                            anchors.rightMargin: 8
-
-                            Repeater {
-                                model: Math.max(codeEdit.lineCount, 1)
-
-                                Label {
-                                    width: 36
-                                    height: 20
-                                    text: index + 1
-                                    color: "#858585"
-                                    font.family: "Menlo"
-                                    font.pixelSize: 13
-                                    horizontalAlignment: Text.AlignRight
-                                    verticalAlignment: Text.AlignVCenter
-                                }
-                            }
+                    Button {
+                        text: "执行"
+                        font.pixelSize: 14
+                        Material.background: "#0e639c"
+                        Material.foreground: "#ffffff"
+                        onClicked: {
+                            if (root.scriptEngine)
+                                root.scriptEngine.evaluate(codeEdit.text)
                         }
                     }
 
-                    // -- 分隔线 --
-                    Rectangle {
-                        width: 1
-                        height: codeEdit.contentHeight
-                        color: "#3c3c3c"
-                    }
-
-                    // -- 代码编辑 --
-                    TextEdit {
-                        id: codeEdit
-                        width: Math.max(scrollView.availableWidth - 49,
-                                        contentWidth + 32)
-                        height: contentHeight
-                        leftPadding: 16
-                        color: "#d4d4d4"
-                        font.family: "Menlo"
-                        font.pixelSize: 13
-                        text: root.defaultCode
-                        tabStopDistance: 32
-                        selectByMouse: true
-                        persistentSelection: true
-                        wrapMode: TextEdit.NoWrap
-                        selectionColor: "#264f78"
-                        selectedTextColor: "#ffffff"
-                        cursorVisible: true
-                        activeFocusOnPress: true
+                    Button {
+                        text: "停止"
+                        font.pixelSize: 14
+                        Material.background: "#5a1d1d"
+                        Material.foreground: "#f48771"
+                        onClicked: {
+                            if (root.scriptEngine)
+                                root.scriptEngine.stop()
+                        }
                     }
                 }
             }

@@ -1,6 +1,0 @@
-<RCC>
-  <qresource prefix="/qt/qml/MachineVision">
-    <file alias="qmldir">/Users/liuchaoyue/myCode/MachineVision/build/Qt_6_10_2_for_macOS-Debug/MachineVision/qmldir</file>
-  </qresource>
-</RCC>
-
