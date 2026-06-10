@@ -33,6 +33,9 @@ ApplicationWindow {
             function onSwitchPage(index) {
                 mainContent.changeIndex(index)
             }
+            function onOpenGlobalVars() {
+                mainContent.openGlobalVars()
+            }
         }
 
         // ========== 底部 ==========

@@ -5,6 +5,8 @@
 #include <QVariantList>
 #include <QVariantMap>
 
+class Logger;
+
 class ScriptApi : public QObject
 {
     Q_OBJECT
@@ -14,6 +16,8 @@ public:
 
     void setConnectionMgr(QObject *mgr);
     void setAlgorithmManager(QObject *mgr);
+    void setLogger(Logger *logger);
+    void setLogPrefix(const QString &prefix);
 
 public slots:
     // -- 核心算法调用 --
@@ -45,6 +49,8 @@ private:
 
     QObject *m_connMgr{nullptr};
     QObject *m_algoMgr{nullptr};
+    Logger *m_logger{nullptr};
+    QString m_logPrefix;
     QVariantMap m_results;
 };
 

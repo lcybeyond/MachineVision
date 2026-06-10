@@ -6,6 +6,8 @@
 #include <QtQml/qqmlregistration.h>
 #include <AlgorithmScriptEngine.h>
 
+class GlobalVariableManager;
+class Logger;
 
 class ScriptManager : public QObject
 {
@@ -15,6 +17,9 @@ class ScriptManager : public QObject
                NOTIFY algorithmManagerChanged)
     Q_PROPERTY(QObject* connectionMgr READ connectionMgr WRITE setConnectionMgr
                NOTIFY connectionMgrChanged)
+    Q_PROPERTY(QObject* globalVariableManager READ globalVariableManager
+               WRITE setGlobalVariableManager NOTIFY globalVariableManagerChanged)
+    Q_PROPERTY(QObject* logger READ logger WRITE setLogger NOTIFY loggerChanged)
     QML_ELEMENT
 
 public:
@@ -29,6 +34,12 @@ public:
     QObject* connectionMgr() const { return m_connectionMgr; }
     void setConnectionMgr(QObject *mgr);
 
+    QObject* globalVariableManager() const;
+    void setGlobalVariableManager(QObject *mgr);
+
+    QObject* logger() const;
+    void setLogger(QObject *mgr);
+
     Q_INVOKABLE QObject* createEngine();
     Q_INVOKABLE void removeEngineAt(int index);
     Q_INVOKABLE QObject* engineAt(int index) const;
@@ -38,10 +49,14 @@ signals:
     void countChanged();
     void algorithmManagerChanged();
     void connectionMgrChanged();
+    void globalVariableManagerChanged();
+    void loggerChanged();
 
 private:
     QObject *m_algoMgr{nullptr};
     QObject *m_connectionMgr{nullptr};
+    GlobalVariableManager *m_globalVarMgr{nullptr};
+    Logger *m_logger{nullptr};
     QList<AlgorithmScriptEngine *> m_scriptEngines;
 };
 

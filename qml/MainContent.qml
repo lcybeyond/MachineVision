@@ -16,10 +16,19 @@ Item {
 
 
     property var algoManager: AlgorithmManager { id: algoManager }
+    property var globalVarMgr: GlobalVariableManager { id: globalVarMgr }
+    property var fileEngine: FileScriptEngine { id: fileEngine }
+    property var logger: Logger { id: logger }
     property var scriptManager: ScriptManager {
         id: scriptManager
         algorithmManager: algoManager
-        connectionMgr: connectionManager  // ConnectionManager 实例
+        connectionMgr: connectionManager
+        globalVariableManager: globalVarMgr
+        logger: logger
+    }
+
+    function openGlobalVars() {
+        globalVarPopup.open()
     }
 
     // ---- 创建算法（与窗口无关） ----
@@ -36,6 +45,8 @@ Item {
         RunView {
             id: runView
             scriptMgr: scriptManager
+            fileEngine: root.fileEngine
+            logger: root.logger
             Layout.fillHeight: true
             Layout.fillWidth: true
         }
@@ -74,5 +85,11 @@ Item {
         function onModifyScriptMgr(count){
           globalScript.scriptEngine = scriptManager.engineAt(count)
         }
+    }
+
+    GlobalVariable {
+        id: globalVarPopup
+        globalVarMgr: root.globalVarMgr
+        fileEngine: root.fileEngine
     }
 }

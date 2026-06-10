@@ -27,6 +27,7 @@ qt_add_qml_module(appMachineVision
         QML_FILES qml/ConnectionSetting.qml
         QML_FILES qml/LayoutSetting.qml
         QML_FILES qml/GlobalScript.qml
+        QML_FILES qml/GlobalVariable.qml
 )
 
 qt_add_qml_module(systemMonitor
@@ -69,6 +70,8 @@ qt_add_qml_module(AlgorithmManager
     src/ScriptApi.h src/ScriptApi.cpp
     src/FileScriptEngine.h src/FileScriptEngine.cpp
     src/ScriptManager.h src/ScriptManager.cpp
+    src/GlobalVariableManager.h src/GlobalVariableManager.cpp
+    src/Logger.h src/Logger.cpp
 )
 
 target_include_directories(AlgorithmManager PRIVATE

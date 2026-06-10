@@ -6,6 +6,7 @@ Item {
     id: root
 
     signal switchPage(int index)
+    signal openGlobalVars()
 
     RowLayout {
         anchors.fill: parent
@@ -36,7 +37,8 @@ Item {
                 onClicked: root.switchPage(3)
             }
             Button {
-                text: qsTr("设置")
+                text: qsTr("全局变量")
+                onClicked: root.openGlobalVars()
             }
         }
 

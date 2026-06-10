@@ -1,5 +1,7 @@
 #include "ScriptManager.h"
 #include "AlgorithmScriptEngine.h"
+#include "GlobalVariableManager.h"
+#include "Logger.h"
 
 ScriptManager::ScriptManager(QObject *parent)
     : QObject(parent)
@@ -31,6 +33,38 @@ void ScriptManager::setConnectionMgr(QObject *mgr)
     }
 }
 
+QObject *ScriptManager::globalVariableManager() const
+{
+    return m_globalVarMgr;
+}
+
+void ScriptManager::setGlobalVariableManager(QObject *mgr)
+{
+    auto *gvm = qobject_cast<GlobalVariableManager *>(mgr);
+    if (m_globalVarMgr != gvm) {
+        m_globalVarMgr = gvm;
+        for (auto *e : m_scriptEngines)
+            e->setGlobalVariableManager(gvm);
+        emit globalVariableManagerChanged();
+    }
+}
+
+QObject* ScriptManager::logger() const
+{
+    return m_logger;
+}
+
+void ScriptManager::setLogger(QObject *mgr)
+{
+    auto *l = qobject_cast<Logger *>(mgr);
+    if (m_logger != l) {
+        m_logger = l;
+        for (auto *e : m_scriptEngines)
+            e->setLogger(l);
+        emit loggerChanged();
+    }
+}
+
 QObject* ScriptManager::createEngine()
 {
     auto *engine = new AlgorithmScriptEngine(this);
@@ -38,6 +72,10 @@ QObject* ScriptManager::createEngine()
         engine->setAlgorithmManager(m_algoMgr);
     if (m_connectionMgr)
         engine->setConnectionMgr(m_connectionMgr);
+    if (m_globalVarMgr)
+        engine->setGlobalVariableManager(m_globalVarMgr);
+    if (m_logger)
+        engine->setLogger(m_logger);
 
     m_scriptEngines.append(engine);
     emit countChanged();

@@ -1,4 +1,6 @@
 #include "AlgorithmScriptEngine.h"
+#include "GlobalVariableManager.h"
+#include "Logger.h"
 #include <QJSEngine>
 #include <QJSValue>
 #include <QDebug>
@@ -23,13 +25,27 @@ void AlgorithmScriptEngine::setAlgorithmManager(QObject *mgr)
     m_api->setAlgorithmManager(mgr);
 }
 
+void AlgorithmScriptEngine::setGlobalVariableManager(GlobalVariableManager *mgr)
+{
+    m_globalVarMgr = mgr;
+}
+
+void AlgorithmScriptEngine::setLogger(QObject *logger)
+{
+    m_api->setLogger(qobject_cast<Logger *>(logger));
+}
+
+void AlgorithmScriptEngine::setLogPrefix(const QString &prefix)
+{
+    m_api->setLogPrefix(prefix);
+}
+
 void AlgorithmScriptEngine::setupEngine()
 {
     QJSValue global = m_engine->globalObject();
 
     QJSValue apiObj = m_engine->newQObject(m_api);
 
-    // -- 连接查询 --
     global.setProperty("readRegs",     apiObj.property("readRegs"));
     global.setProperty("writeReg",     apiObj.property("writeReg"));
     global.setProperty("writeRegs",    apiObj.property("writeRegs"));
@@ -37,17 +53,14 @@ void AlgorithmScriptEngine::setupEngine()
     global.setProperty("connStatus",   apiObj.property("connStatus"));
     global.setProperty("connNames",    apiObj.property("connectionNames"));
 
-    // -- 核心算法 --
     global.setProperty("callProcess",   apiObj.property("callProcess"));
     global.setProperty("algoNames",     apiObj.property("algorithmNames"));
     global.setProperty("algoTypes",     apiObj.property("algorithmTypes"));
 
-    // -- 结果存取 --
     global.setProperty("setResult",    apiObj.property("setResult"));
     global.setProperty("getResult",    apiObj.property("getResult"));
     global.setProperty("clearResults", apiObj.property("clearResults"));
 
-    // -- 工具 --
     global.setProperty("log",     apiObj.property("log"));
     global.setProperty("print",   apiObj.property("log"));
     global.setProperty("now",     apiObj.property("now"));
@@ -56,6 +69,22 @@ void AlgorithmScriptEngine::setupEngine()
 
 QVariant AlgorithmScriptEngine::evaluate(const QString &code)
 {
+    QJSValue global = m_engine->globalObject();
+
+    // 清除上一次注入的变量
+    for (const QString &name : m_injectedVarNames)
+        global.deleteProperty(name);
+    m_injectedVarNames.clear();
+
+    // 注入当前全局变量
+    if (m_globalVarMgr) {
+        QVariantMap vars = m_globalVarMgr->toScriptValues();
+        for (auto it = vars.begin(); it != vars.end(); ++it) {
+            global.setProperty(it.key(), m_engine->toScriptValue(it.value()));
+            m_injectedVarNames.append(it.key());
+        }
+    }
+
     QJSValue result = m_engine->evaluate(code);
     if (result.isError()) {
         QString err = QString("Line %1: %2")

@@ -1,4 +1,5 @@
 #include "ScriptApi.h"
+#include "Logger.h"
 #include <QMetaObject>
 #include <QDebug>
 #include <QThread>
@@ -17,6 +18,16 @@ void ScriptApi::setConnectionMgr(QObject *mgr)
 void ScriptApi::setAlgorithmManager(QObject *mgr)
 {
     m_algoMgr = mgr;
+}
+
+void ScriptApi::setLogger(Logger *logger)
+{
+    m_logger = logger;
+}
+
+void ScriptApi::setLogPrefix(const QString &prefix)
+{
+    m_logPrefix = prefix;
 }
 
 // ========== 内部辅助 ==========
@@ -198,6 +209,10 @@ void ScriptApi::clearResults()
 void ScriptApi::log(const QString &msg)
 {
     qDebug().noquote() << "[Script]" << msg;
+    if (m_logger) {
+        QString line = m_logPrefix.isEmpty() ? msg : (m_logPrefix + ": " + msg);
+        m_logger->append(line);
+    }
 }
 
 qint64 ScriptApi::now() const
