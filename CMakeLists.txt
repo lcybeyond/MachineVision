@@ -48,6 +48,8 @@ qt_add_qml_module(ConnectionManager
     SOURCES
     src/AbstractConnection.cpp src/AbstractConnection.h
     src/ModbusTcpClient.cpp src/ModbusTcpClient.h
+    src/SerialConnection.cpp src/SerialConnection.h
+    src/CameraConnection.cpp src/CameraConnection.h
     src/ConnectionManager.cpp src/ConnectionManager.h
 )
 
@@ -57,7 +59,7 @@ target_include_directories(ConnectionManager PRIVATE
 )
 
 target_link_libraries(ConnectionManager
-    PRIVATE Qt6::SerialBus
+    PRIVATE Qt6::SerialBus Qt6::Gui
 )
 
 qt_add_qml_module(AlgorithmManager
@@ -80,6 +82,9 @@ target_include_directories(AlgorithmManager PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
+target_link_libraries(AlgorithmManager
+    PRIVATE Qt6::Gui
+)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an

@@ -1,3 +1,5 @@
+// SystemMonitor.cpp —— 系统监控实现
+// 通过 macOS 原生 Mach API 获取系统内存使用率，每秒刷新一次并通过 QML 属性通知界面更新
 #include "SystemMonitor.h"
 #include <QDebug>
 
@@ -11,6 +13,7 @@ SystemMonitor::SystemMonitor(QObject *parent)
     : QObject(parent)
     , m_timer(new QTimer(this))
 {
+    // 构造函数：创建定时器，每秒触发一次内存指标更新
     connect(m_timer, &QTimer::timeout, this, &SystemMonitor::updateMetrics);
     m_timer->start(1000); // 每秒刷新
 
@@ -19,6 +22,8 @@ SystemMonitor::SystemMonitor(QObject *parent)
 
 void SystemMonitor::updateMetrics()
 {
+    // 通过 macOS 内核 Mach API 获取虚拟内存统计数据，计算内存使用百分比
+    // 使用公式：内存使用率 = (活跃页 + 联动页 + 投机页) / 总页数 × 100%
     mach_msg_type_number_t count = HOST_VM_INFO64_COUNT;
 
     vm_statistics64_data_t vmStats;
