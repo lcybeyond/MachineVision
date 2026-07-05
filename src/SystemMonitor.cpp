@@ -8,7 +8,7 @@
 #include <mach/mach_host.h>
 #include <sys/sysctl.h>
 #include <unistd.h>
-
+//hi
 SystemMonitor::SystemMonitor(QObject *parent)
     : QObject(parent)
     , m_timer(new QTimer(this))
